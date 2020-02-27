@@ -1,0 +1,62 @@
+id,value,color
+Skills,
+Skills.Front-End,
+Skills.Front-End.Html & CSS,4.0,#E54F24
+Skills.Front-End.JavaScript,4.5,#59666C
+Skills.Front-End.Bootstrap,3,#563B7E
+Skills.Front-End.React,2.5,#259DFE
+Skills.Languages,
+Skills.Languages.Java,4.5,#EB2C2F
+Skills.Languages.Python,4,#3B77A8
+Skills.Languages.Scala,3.5,#DC322F
+Skills.Languages.Golang,3,#00ACD7
+Skills.Languages.R,1.5,#808080
+Skills.Big Data,
+Skills.Big Data.Hadoop,
+Skills.Big Data.Hadoop.HDFS/MapReduce,4,#67CEFF
+Skills.Big Data.Hadoop.Hive,4.5,#FDEE21
+Skills.Big Data.Hadoop.Pig,3.5,#F6854D
+Skills.Big Data.Hadoop.Sqoop,4,#3EB049
+Skills.Big Data.Hadoop.Flume,4,#3C8ACA
+Skills.Big Data.ELK,3.5,#F04E98
+Skills.Big Data.Visualization,
+Skills.Big Data.Visualization.D3,4,#D8704D
+Skills.Big Data.Visualization.ggplot2,2.5,#4F4F4F
+Skills.Big Data.Visualization.matplotlib,3.5,#0C537B
+Skills.Big Data.Visualization.Tableau,3,#1C447E
+Skills.Big Data.Collaboration,
+Skills.Big Data.Collaboration.Anaconda,3,#3EB049
+Skills.Big Data.Collaboration.Jupyter,4.5,#F37726
+Skills.Big Data.Collaboration.Zeppelin,3.5,#447FB1
+Skills.Streaming,
+Skills.Streaming.Beam,3,#26A9E0
+Skills.Streaming.Flink,3.5,#E85170
+Skills.Streaming.Kafka,4,#000000
+Skills.Streaming.Spark,4.5,#3C3A3E
+Skills.SQL,
+Skills.SQL.Oracle,4.5,#FD0000
+Skills.SQL.SqlServer,4.5,#8492A0
+Skills.SQL.MySQL,2.5,#BB6B1D
+Skills.SQL.PostgreSQL,3.5,#31668F
+Skills.NoSQL,
+Skills.NoSQL.MongoDB,4.5,#3F2915
+Skills.NoSQL.Cassandra,3.5,#197A9B
+Skills.NoSQL.HBase,3.0,#B9170C
+Skills.NoSQL.InfluxDB,3.5,#21242D
+Skills.NoSQL.Neo4j,3.5,#63B345
+Skills.NoSQL.Redis,3,#D5291F
+Skills.Cloud,
+Skills.Cloud.AWS,4,#F68D11
+Skills.Cloud.GCP,3.5,#4A8AF5
+Skills.Cloud.Heroku,3,#410095
+Skills.Cloud.Azure,3.5,#2075B8
+Skills.DevOps,
+Skills.DevOps.Jira,3.5,#01366C
+Skills.DevOps.Git,3,#382700
+Skills.DevOps.Maven,4.5,#F9710D
+Skills.DevOps.Pytest,3,#C6CD2A
+Skills.DevOps.JMeter,3.5,#CC2027
+Skills.DevOps.Jenkins,3.5,#DE3643
+Skills.DevOps.TeamCity,2.5,#39E45F
+Skills.DevOps.Docker,4,#24BBEF
+Skills.DevOps.Kubernetes,3.5,#2A55F4

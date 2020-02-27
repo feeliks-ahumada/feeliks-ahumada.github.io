@@ -1,0 +1,60 @@
+{
+    "prog" : [
+        { "name": "Java",
+            "axes": [
+                {"axis": "Web", "value": 4.5},
+                {"axis": "Back-end", "value": 4.5},
+                {"axis": "Mobile", "value": 2},
+                {"axis": "Desktop", "value": 3.5},
+                {"axis": "Data", "value": 4.5},
+                {"axis": "Cloud", "value": 4}
+            ]
+        },
+        { "name": "Python",
+            "axes": [
+                {"axis": "Web", "value": 3.5},
+                {"axis": "Back-end", "value": 4},
+                {"axis": "Mobile", "value": 0},
+                {"axis": "Desktop", "value": 2.5},
+                {"axis": "Data", "value": 4.5},
+                {"axis": "Cloud", "value": 4.5}
+            ]
+        },
+        { "name": "Golang",
+            "axes": [
+                {"axis": "Web", "value": 1.5},
+                {"axis": "Back-end", "value": 4.5},
+                {"axis": "Mobile", "value": 0},
+                {"axis": "Desktop", "value": 0},
+                {"axis": "Data", "value": 3.5},
+                {"axis": "Cloud", "value": 4.5}
+            ]
+        }
+    ],
+    "data":[
+        { "name": "Data",
+            "axes": [
+                {"axis": "Modeling", "value": 3.5},
+                {"axis": "Ingestion", "value": 4.5},
+                {"axis": "Store", "value": 4.5},
+                {"axis": "Processing", "value": 4.8},
+                {"axis": "Analysis", "value": 3.2},
+                {"axis": "Visualization", "value": 3.8}
+            ]
+        }
+    ],
+    "devops":[
+        { "name": "DevOps",
+            "axes": [
+                {"axis": "Plan", "value": 3},
+                {"axis": "Code", "value": 3.5},
+                {"axis": "Build", "value": 3},
+                {"axis": "Test", "value": 2.5},
+                {"axis": "Release", "value": 3},
+                {"axis": "Deploy", "value": 4},
+                {"axis": "Operate", "value": 2.5},
+                {"axis": "Monitor", "value": 3.5}
+            ]
+        }
+    ]
+}
