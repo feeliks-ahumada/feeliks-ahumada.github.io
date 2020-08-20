@@ -4,84 +4,105 @@ xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitem
 xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
-<loc>/</loc>
-<lastmod>2020-02-27T05:07:55-00:00</lastmod>
+<loc>https://feeliks-ahumada.github.io/</loc>
+<lastmod>2020-08-19T21:21:15-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/tags.html</loc>
-<lastmod>2020-02-27T05:07:55-00:00</lastmod>
+<loc>https://feeliks-ahumada.github.io/tags.html</loc>
+<lastmod>2020-08-19T21:21:15-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/categories.html</loc>
-<lastmod>2020-02-27T05:07:55-00:00</lastmod>
+<loc>https://feeliks-ahumada.github.io/categories.html</loc>
+<lastmod>2020-08-19T21:21:15-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/authors.html</loc>
-<lastmod>2020-02-27T05:07:55-00:00</lastmod>
+<loc>https://feeliks-ahumada.github.io/authors.html</loc>
+<lastmod>2020-08-19T21:21:15-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/archives.html</loc>
-<lastmod>2020-02-27T05:07:55-00:00</lastmod>
+<loc>https://feeliks-ahumada.github.io/archives.html</loc>
+<lastmod>2020-08-19T21:21:15-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/pages/about/</loc>
+<loc>https://feeliks-ahumada.github.io/about/</loc>
 <lastmod>2019-08-08T01:21:00-05:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/pages/profile/</loc>
+<loc>https://feeliks-ahumada.github.io/profile/</loc>
 <lastmod>2019-08-08T01:21:00-05:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/pages/projects/</loc>
+<loc>https://feeliks-ahumada.github.io/projects/</loc>
 <lastmod>2020-01-08T01:21:00-06:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/2020/01/docker-containers.html</loc>
+<loc>https://feeliks-ahumada.github.io/2020/01/docker-containers.html</loc>
 <lastmod>2020-01-12T00:30:00-06:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/category/misc</loc>
+<loc>https://feeliks-ahumada.github.io/2018/07/influxdb.html</loc>
+<lastmod>2018-07-11T00:45:00-05:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://feeliks-ahumada.github.io/category/misc</loc>
 <lastmod>2020-01-12T00:30:00-06:41</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/tag/docker</loc>
+<loc>https://feeliks-ahumada.github.io/tag/docker</loc>
 <lastmod>2020-01-12T00:30:00-06:41</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>/author/felix-martinez</loc>
+<loc>https://feeliks-ahumada.github.io/tag/newsql</loc>
+<lastmod>2018-07-11T00:45:00-06:41</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://feeliks-ahumada.github.io/tag/influxdb</loc>
+<lastmod>2018-07-11T00:45:00-06:41</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://feeliks-ahumada.github.io/author/felix-martinez</loc>
 <lastmod>2020-01-12T00:30:00-06:41</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>

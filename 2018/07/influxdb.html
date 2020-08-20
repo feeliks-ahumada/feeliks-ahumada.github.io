@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+	<meta name="description" content="One of my first tasks in my job was to migrate from MongoDB to InfluxDB. In this post, I'm going to summarize my experience in such an...">
+
+	<meta name="author" content="Felix Martinez">
+
+	<meta name="tags" content="NewSQL">
+	<meta name="tags" content="InfluxDB">
+	<link href="../../2018/07/influxdb.html" rel="canonical" />
+  	<title>Migrating from MongoDB to InfluxDB</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="generator" content="Pelican" />
+
+	<meta name="description" content="This is a personal notebook where I posting interesting data engineering stuffs" />
+
+	<link href="../../" rel="canonical" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Theme CSS -->
+    <link href="../../theme/css/monterrey.css" type="text/css" rel="stylesheet" />
+
+    <!-- Code highlight color scheme -->
+	<link href="../../theme/css/code_blocks/github.css" rel="stylesheet">
+
+	</head>
+	<body>
+	
+<header id="header" class="container-fluid header transition">
+	<div id="caption" class="container">
+		<img id="profile_pic" src="../../assets/images/profile.jpg" class="shadow rounded-circle float-sm-left img-thumbnail profile_pic t_all" alt=""/>
+		<h1 class="t_all">Felix Martinez | Data Engineering Blog</h1>
+	</div>
+	<nav class="navbar navbar-expand navbar-dark menu transition">
+	  <a class="navbar-brand" href="">&#187;</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+	    <div class="navbar-nav">
+	      <a class="nav-item nav-link " href="../../">Home</a>
+	      
+	      		<a class="nav-item nav-link " href="../../about/" >About</a>
+	      		<a class="nav-item nav-link " href="../../profile/" >Profile</a>
+	      		<a class="nav-item nav-link " href="../../projects/" >Projects</a>
+	    </div>
+	  </div>
+	</nav>
+	<div class="ribbon"></div>
+    <div class="blog-cover" style="background-image: url('../../theme/imgs/banner.jpg')"></div> 
+</header>
+	<section id="main" class="container main">
+	<h1>Migrating from MongoDB to InfluxDB</h1>
+	<div>
+		<p>One of my first tasks in my job was to migrate from MongoDB to InfluxDB.
+In this post, I'm going to summarize my experience in such an effort and how
+I did deal with InfluxDB with no previous experience.</p>
+<div class="section" id="the-scenario">
+<h2>The Scenario</h2>
+<ul class="simple">
+<li>We are parsing counters from monitoring systems who come in binary and XML files. These
+files contain lots of metrics however not all are useful for later analysis. The filter
+rules are stored in configuration files along with the solution.</li>
+<li>The parsers are writing single documents in MongoDB using simple insertion operations.
+Parsing 250 Gb of the sample data takes around a week running in a virtual machine with
+16Gb of memory, 8 processors.</li>
+<li>The parsers are written in Java using multithreading and other APIs like SAX for XML reads,
+native MongoDB client, logging, etc.</li>
+</ul>
+</div>
+<div class="section" id="data-modeling">
+<h2>Data modeling</h2>
+<p>Whereas while the objective of the re-architecting is improving the performance of the data
+acquisition is absolutely imperative to change the data modeling not just for performance
+purposes but also for time series analysis.</p>
+<p>Consider the documents written in Mongo like:</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nx">_id</span><span class="o">:</span> <span class="nx">UUID</span><span class="p">(),</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="nx">counter_name</span><span class="p">,</span>
+    <span class="nx">date</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;$date&quot;</span><span class="o">:</span><span class="s2">&quot;2017-08-11T17:54:14.692Z&quot;</span><span class="p">},</span>
+    <span class="nx">prop1</span><span class="p">,...,</span><span class="nx">propn</span>
+<span class="p">}</span>
+</pre></div>
+<p>The properties <tt class="docutils literal"><span class="pre">prop1,...,propn</span></tt> are numeric values or numeric arrays in some cases.
+The hardest work was reviewing all those counters and arranged into useful and non required
+by the algorithms.</p>
+<p>In MongoDB, you can model as embedded document such kind of structure easily, and using a
+bulk operation you can improve the data load. In InfluxDB, however, I would not recommend
+that design, the data points have a structure like:</p>
+<p><tt class="docutils literal"><span class="pre">&lt;measurement&gt;[,&lt;tag-key&gt;=&lt;tag-value&gt;...]</span> <span class="pre">&lt;field-key&gt;=&lt;field-value&gt;[,&lt;field2-key&gt;=&lt;field2-value&gt;...]</span> <span class="pre">[unix-nano-timestamp]</span></tt></p>
+<p>Where tags are indexed and field are not, considering this you need to avoid writing
+lots of tags for querying and lots of fields as properties because it has an elevating cost.
+It is better instead write consistent metrics within the tagging domain and use different
+measurements rather than a huge structure. There can be many options for downsampling
+specific measurements using aggregation pipelines for future analysis.
+You can learn more about InfluxDB's concepts <a class="reference external" href="https://docs.influxdata.com/influxdb/v1.8/concepts/key_concepts/">here</a>.</p>
+<p>Let's jump into an example to be more clear. Looking into the UCI Machine Learning Repository
+I found <a class="reference external" href="http://archive.ics.uci.edu/ml/datasets/Beijing+Multi-Site+Air-Quality+Data">this</a> data set which includes hourly air pollutants data from Beijing.
+It looks interesting because contains multiple files with well-formed rows.</p>
+<p>From row 2 to 5 will represent the timestamp in any case. Let's suppose that we want to plot
+the wind, for this requirement would be useful to get a measurement structure taking the wind
+speed and direction, row 17 and 16 respectively. Our measurement's schema will be like:
+<tt class="docutils literal"><span class="pre">&quot;Wind,station=%s</span> <span class="pre">direction=\&quot;%s\&quot;,speed=%s</span> %d&quot;</tt></p>
+<p>It will allow us queries like:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Wind</span> <span class="k">where</span> <span class="n">station</span><span class="o">=</span><span class="s1">&#39;Aotizhongxin&#39;</span> <span class="k">limit</span> <span class="mi">10</span>
+</pre></div>
+<p>Depends on the amount of data expected and the retention policies would be better
+to have measurements like:</p>
+<p><tt class="docutils literal">Aotizhongxin_PM2_SO2</tt>
+<tt class="docutils literal">Aotizhongxin_TEMP</tt></p>
+<p>Whatever would be the analysis goals you can decompose the data as get the features required.
+In the given example I do suppose that is required to correlate PM2.5 with SO2 concentrations
+and other measurements for enrichment, I'm no an expert in air pollution it's clear, but the
+fact is that you need to develop ideas about what kind of measurements would be useful for
+labeling or predicting. This may be addressed in collaboration with the Data Science team.</p>
+</div>
+<div class="section" id="the-code">
+<h2>The Code</h2>
+<p>There is nothing special in <a href="https://github.com/feeliks-ahumada/influxmigration" target="_blank">this code</a>, we are reading the files using multithreading,
+and storing using the latest Java's API version, but I'm still using the InfluxDB 1.8.
+I must say however the API has good improvements in reads and writes.</p>
+<p>As I mention previously when we depicted data points a good practice is to handle separated
+measurements. In the next code, we are formatting the Wind measurement:</p>
+<div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">lineProtocol</span><span class="p">(</span><span class="n">String</span> <span class="n">line</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">String</span><span class="o">[]</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">line</span><span class="p">.</span><span class="na">replace</span><span class="p">(</span><span class="s">&quot;\&quot;&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">).</span><span class="na">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">);</span>
+
+    <span class="n">ZonedDateTime</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">getZonedDateTime</span><span class="p">(</span><span class="n">cols</span><span class="p">);</span>
+
+    <span class="n">String</span> <span class="n">format</span><span class="p">;</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="n">format</span> <span class="o">=</span> <span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">&quot;Wind,station=%s direction=\&quot;%s\&quot;,speed=%s %d&quot;</span><span class="p">,</span>
+                <span class="n">cols</span><span class="o">[</span><span class="mi">17</span><span class="o">]</span><span class="p">,</span>
+                <span class="n">cols</span><span class="o">[</span><span class="mi">15</span><span class="o">]</span><span class="p">,</span>
+                <span class="n">cols</span><span class="o">[</span><span class="mi">16</span><span class="o">]</span><span class="p">,</span>
+                <span class="n">timestamp</span><span class="p">.</span><span class="na">toEpochSecond</span><span class="p">()</span>
+        <span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">format</span> <span class="o">=</span> <span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">&quot;fails,m=%s value=%s %d&quot;</span><span class="p">,</span><span class="n">cols</span><span class="o">[</span><span class="mi">17</span><span class="o">]</span><span class="p">,</span><span class="n">cols</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">,</span><span class="n">timestamp</span><span class="p">.</span><span class="na">toEpochSecond</span><span class="p">());</span>
+        <span class="n">logger</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="na">getMessage</span><span class="p">());</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">format</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>Notice that this method is a good candidate for re-engineering, to create a new class using
+the factory patterns to get a custom measurement format depending on the feature that we
+are looking for.</p>
+<p>We now have the next sampled series:</p>
+<div class="highlight"><pre><span></span><span class="k">show</span> <span class="n">series</span>
+</pre></div>
+<div class="highlight"><pre><span></span>Key
+---
+Wind,station<span class="o">=</span>Aotizhongxin
+Wind,station<span class="o">=</span>Changping
+Wind,station<span class="o">=</span>Dingling
+Wind,station<span class="o">=</span>Dongsi
+Wind,station<span class="o">=</span>Guanyuan
+Wind,station<span class="o">=</span>Gucheng
+Wind,station<span class="o">=</span>Huairou
+Wind,station<span class="o">=</span>Nongzhanguan
+Wind,station<span class="o">=</span>Shunyi
+Wind,station<span class="o">=</span>Tiantan
+Wind,station<span class="o">=</span>Wanliu
+Wind,station<span class="o">=</span>Wanshouxigong
+</pre></div>
+<p>To compile and run the code you need to install Java 8, Maven, and running properly the InfluxDB,
+I recommend the <a href="https://github.com/influxdata/sandbox" target="_blank">sandbox</a> for testing purposes.</p>
+<blockquote>
+Post migrated from a previous blog, updated with source code.</blockquote>
+</div>
+
+	</div>
+<div class="clear space"></div>
+<section class="space">
+	<div class="post-share">
+		<a class="twitter" href="https://twitter.com/share?text=Migrating from MongoDB to InfluxDB&amp;url=../../2018/07/influxdb.html" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+			<i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+		</a>
+		<a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=../../2018/07/influxdb.html" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+			<i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+		</a>
+		<div class="clear"></div>
+	</div>
+
+		<aside class="post-tags">
+				<a href="../../tag/newsql">#NewSQL</a>
+				<a href="../../tag/influxdb">#InfluxDB</a>
+		</aside>
+
+	<div class="clear"></div>
+
+		<aside class="post-author">
+
+			<div class="post-author-bio">
+				<h4 class="post-author-name"><a href="../../author/felix-martinez">Felix Martinez</a></h4>
+					<p class="post-author-about">Mexican, Software Engineer, Tigres supporter</p>
+					<span class="post-author-location"><i class="ic ic-location"></i> Monterrey, MX</span>
+				<!-- Social linkes in alphabet order. -->
+					<span class="post-author-github"><a target="_blank" href="https://github.com/feeliks-ahumada"><i class="ic ic-link"></i> GitHub</a></span>
+					<span class="post-author-twitter"><a target="_blank" href="https://twitter.com/feeliksahumada"><i class="ic ic-twitter"></i> Twitter</a></span>
+			</div>
+			<div class="clear"></div>
+		</aside>
+</section>
+
+<section>
+	<script type="text/javascript">
+		var disqus_config = function () {
+		
+		this.page.url = '../../2018/07/influxdb.html';  // Replace PAGE_URL with your page's canonical URL variable
+		this.page.identifier = '/2018/07/influxdb.html';
+		};
+	</script>
+	<noscript>Please enable JavaScript to view the comments.</noscript>
+	<section class="post-comments">
+			<a id="show-disqus" class="post-comments-activate" data-disqus-identifier="/2018/07/influxdb.html" href="/2018/07/influxdb.html#disqus_thread">Show Comments</a>
+	<div id="disqus_thread"></div>
+	</section>
+
+	<aside class="post-nav">
+		<a class="post-nav-next" href="../../2020/01/docker-containers.html">
+			<section class="post-nav-teaser">
+				<i class="ic ic-arrow-left"></i>
+				<h2 class="post-nav-title">Docker for data engineering, Part 1</h2>
+				<p class="post-nav-excerpt">In this post I'll list the most common containers that I'm using in my daily work. I...</p>
+			</section>
+		</a>
+	<div class="clear"></div>
+	</aside>
+</section>	</section>
+	<footer>
+		<div class="d-block p-2 bg-dark text-white">
+			<div class="container credits">
+
+
+			<small>Theme <a href="https://github.com/getpelican/pelican" rel="nofollow" target="_blank">Monterrey</a></small>
+			<small class="credits-pelican">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow" target="_blank">Pelican</a></small>
+			</div>
+		</div>
+	</footer>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!--I left this here because I wanted a summary comments on each post of the list otherwise I'd put it on the article -->
+    <script id="dsq-count-scr" src="//feeliks.disqus.com/count.js" async></script>
+    <script src="../../theme/js/monterrey.js"></script>
+
+	<script type="text/javascript">
+	$("#show-disqus").click(function(){
+		$(".post-comments").addClass("activated");
+
+			(function() { // DON'T EDIT BELOW THIS LINE
+			var d = document, s = d.createElement('script');
+			s.src = 'https://feeliks.disqus.com/embed.js';
+			s.setAttribute('data-timestamp', +new Date());
+			(d.head || d.body).appendChild(s);
+			})();
+	});
+	</script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145682573-1"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-145682573-1');
+	</script>
+  </body>
+</html>
