@@ -1,15 +1,9 @@
 id,value,color
 Skills,
-Skills.Front-End,
-Skills.Front-End.Html & CSS,4.0,#E54F24
-Skills.Front-End.JavaScript,4.5,#59666C
-Skills.Front-End.Bootstrap,3,#563B7E
-Skills.Front-End.React,2.5,#259DFE
 Skills.Languages,
 Skills.Languages.Java,4.5,#EB2C2F
 Skills.Languages.Python,4,#3B77A8
 Skills.Languages.Scala,3.5,#DC322F
-Skills.Languages.Golang,3,#00ACD7
 Skills.Languages.R,1.5,#808080
 Skills.Big Data,
 Skills.Big Data.Hadoop,
@@ -23,7 +17,9 @@ Skills.Big Data.Visualization,
 Skills.Big Data.Visualization.D3,4,#D8704D
 Skills.Big Data.Visualization.ggplot2,2.5,#4F4F4F
 Skills.Big Data.Visualization.matplotlib,3.5,#0C537B
-Skills.Big Data.Visualization.Tableau,3,#1C447E
+Skills.Big Data.Visualization.PowerBI,4.5,#E54F24
+Skills.Big Data.Visualization.Looker,3,#1C447E
+Skills.Big Data.Visualization.Superset,3,#59666C
 Skills.Big Data.Collaboration,
 Skills.Big Data.Collaboration.Anaconda,3,#3EB049
 Skills.Big Data.Collaboration.Jupyter,4.5,#F37726
@@ -46,8 +42,9 @@ Skills.NoSQL.InfluxDB,3.5,#21242D
 Skills.NoSQL.Neo4j,3.5,#63B345
 Skills.NoSQL.Redis,3,#D5291F
 Skills.Cloud,
-Skills.Cloud.AWS,4,#F68D11
 Skills.Cloud.GCP,3.5,#4A8AF5
+Skills.Cloud.AWS,4,#F68D11
+Skills.Cloud.Azure,3.5,#259DFE
 Skills.Cloud.Heroku,3,#410095
 Skills.Cloud.Joyent,3.5,#FF6600
 Skills.DevOps,

@@ -20,14 +20,14 @@
                 {"axis": "Cloud", "value": 4.5}
             ]
         },
-        { "name": "Golang",
+        { "name": "Scala",
             "axes": [
-                {"axis": "Web", "value": 1.5},
-                {"axis": "Back-end", "value": 4.5},
+                {"axis": "Web", "value": 1.0},
+                {"axis": "Back-end", "value": 3.5},
                 {"axis": "Mobile", "value": 0},
                 {"axis": "Desktop", "value": 0},
-                {"axis": "Data", "value": 3.5},
-                {"axis": "Cloud", "value": 4.5}
+                {"axis": "Data", "value": 4.5},
+                {"axis": "Cloud", "value": 2.5}
             ]
         }
     ],
